@@ -32,7 +32,10 @@ pipeline:
                   identifier: Run_2
                   spec:
                     shell: Sh
-                    command: sh 'noxfile.py'
+                    command: |-
+                      set -e; python noxfile.py
+                      pip install nox
+                      nox -f noxfile.py
               - step:
                   type: RunTests
                   name: RunTests_1
