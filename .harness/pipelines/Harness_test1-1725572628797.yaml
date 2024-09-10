@@ -34,7 +34,7 @@ pipeline:
                     shell: Sh
                     command: |-
                       pip install nox
-                      -e; python noxfile.py
+                      python noxfile.py
                       nox -f noxfile.py
               - step:
                   type: RunTests
