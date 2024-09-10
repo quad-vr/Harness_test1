@@ -9,7 +9,7 @@
 #     confirms your long_description will render correctly on PyPI.
 #
 #  and also to help confirm pull requests to this project.
-#python3 -m pip install nox
+
 import nox
 import os
 
@@ -50,8 +50,8 @@ def tests(session):
     session.install(generated_sdist)
 
     session.run("py.test", "tests/", *session.posargs)
-import nox
-import os
+
+
 
 nox.options.sessions = ["lint"]
 
