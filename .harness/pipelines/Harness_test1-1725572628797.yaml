@@ -33,8 +33,8 @@ pipeline:
                   spec:
                     shell: Sh
                     command: |-
-                      set -e; python noxfile.py
                       pip install nox
+                      -e; python noxfile.py
                       nox -f noxfile.py
               - step:
                   type: RunTests
