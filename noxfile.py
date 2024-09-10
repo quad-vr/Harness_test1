@@ -9,7 +9,7 @@
 #     confirms your long_description will render correctly on PyPI.
 #
 #  and also to help confirm pull requests to this project.
-python3 -m pip install nox
+#python3 -m pip install nox
 import nox
 import os
 
