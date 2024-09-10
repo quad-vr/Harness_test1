@@ -34,6 +34,7 @@ pipeline:
                     shell: Sh
                     command: |-
                       pip install nox
+                      pip install flake8
                       python noxfile.py
                       nox -f noxfile.py
               - step:
