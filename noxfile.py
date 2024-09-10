@@ -42,7 +42,6 @@ def build_and_check_dists(session):
 @nox.session(python=["3.8", "3.9", "3.10", "3.11", "3.12"])
 def tests(session):
     session.install("pytest")
-    
     # Ensure build_and_check_dists is necessary before running tests
     build_and_check_dists(session)
 
@@ -54,4 +53,3 @@ def tests(session):
         session.error("No sdist found in dist/ directory")
 
     session.run("pytest", "tests/", *session.posargs)
-
