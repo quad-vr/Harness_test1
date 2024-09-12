@@ -1,2 +1,35 @@
-pytest
-pytest-cov
+stages:
+  - stage:
+      name: Test
+      type: Run
+      spec:
+        execution:
+          steps:
+            - step:
+                type: Run
+                name: Run Pytest
+                identifier: Run_pytest
+                spec:
+                  connectorRef: account.harnessImage
+                  image: python:latest
+                  shell: Sh
+                  command: |
+                    echo "Setting up environment..."
+
+                    # Install dependencies
+                    pip install -r requirements.txt || true
+
+                    # Install pytest and coverage tools
+                    pip install pytest pytest-cov
+
+                    echo "Running tests with pytest..."
+
+                    # Run pytest with coverage and generate XML report
+                    pytest --cov=my_app --cov-report=xml --junitxml=report.xml
+
+                    echo "Tests completed."
+                  reports:
+                    type: JUnit
+                    spec:
+                      paths:
+                        - "**/report.xml"
