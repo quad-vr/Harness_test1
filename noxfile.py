@@ -27,29 +27,42 @@ def lint(session):
         "--select", "E,W,F", "."
     )
 
-
 @nox.session
 def build_and_check_dists(session):
     session.install("build", "check-manifest >= 0.42", "twine")
+    
     # If your project uses README.rst, uncomment the following:
     # session.install("readme_renderer")
 
+    # Check the manifest
     session.run("check-manifest", "--ignore", "noxfile.py,tests/**")
-    session.run("python", "-m", "build")
-    session.run("python", "-m", "twine", "check", "dist/*")
 
+    # Build the package
+    session.run("python", "-m", "build")
+
+    # Check if the distribution files are valid
+    session.run("python", "-m", "twine", "check", "dist/*")
 
 @nox.session(python=["3.8", "3.9", "3.10", "3.11", "3.12"])
 def tests(session):
+    # Install pytest and any other dependencies
     session.install("pytest")
-    # Ensure build_and_check_dists is necessary before running tests
-    build_and_check_dists(session)
 
+    # Notify Nox to run build_and_check_dists session before running tests
+    session.notify("build_and_check_dists")
+
+    # Get the list of files in the dist/ directory
     generated_files = os.listdir("dist/")
-    if len(generated_files) > 1:
-        generated_sdist = os.path.join("dist/", generated_files[1])
-        session.install(generated_sdist)
-    else:
-        session.error("No sdist found in dist/ directory")
+    
+    # Filter the list for sdist files (.tar.gz or .zip)
+    sdist_files = [f for f in generated_files if f.endswith(".tar.gz") or f.endswith(".zip")]
 
+    # Ensure we found a valid sdist file
+    if len(sdist_files) == 0:
+        session.error("No sdist found in dist/ directory")
+    else:
+        generated_sdist = os.path.join("dist/", sdist_files[0])
+        session.install(generated_sdist)
+
+    # Run the tests with pytest
     session.run("pytest", "tests/", *session.posargs)
