@@ -25,7 +25,10 @@ pipeline:
                   spec:
                     shell: Sh
                     command: |-
-                      - step:
+                      command: |-
+                        set -e;
+
+                        - step:
                           type: Run
                           name: Run pytest
                           identifier: Run_pytest
