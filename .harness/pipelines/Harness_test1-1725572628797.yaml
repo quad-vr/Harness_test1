@@ -23,7 +23,31 @@ pipeline:
                   identifier: echo
                   name: echo
                   spec:
-                    command: echo hello world
+                    shell: Sh
+                    command: |-
+                      - step:
+                                        type: Run
+                                        name: Run pytest
+                                        identifier: Run_pytest
+                                        spec:
+                                          connectorRef: account.harnessImage
+                                          image: python:latest
+                                          shell: Sh
+                                          command: |-
+                                            echo "Welcome to Harness CI"
+                                            uname -a
+                                            pip install pytest
+                                            pip install pytest-cov
+                                            pip install -r requirements.txt
+
+                                            pytest -v --cov --junitxml="result.xml" test_api.py test_api_2.py test_api_3.py
+
+                                            echo "Done"
+                                          reports:
+                                            type: JUnit
+                                            spec:
+                                              paths:
+                                                - "**/*.xml"
                   timeout: ""
                   type: Run
               - step:
