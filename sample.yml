@@ -1,0 +1,79 @@
+pipeline:
+  name: Sample Pipeline
+  description: A sample pipeline to demonstrate testing with pytest.
+  stages:
+    - stage:
+        name: Build
+        type: Build
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Build Application
+                  identifier: Build_App
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: python:latest
+                    shell: Sh
+                    command: |-
+                      echo "Building application..."
+                      # Add your build commands here, e.g., `python setup.py install`
+                      echo "Build completed."
+    
+    - stage:
+        name: Test
+        type: Test
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run Pytest
+                  identifier: Run_pytest
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: python:latest
+                    shell: Sh
+                    command: |-
+                      echo "Setting up environment..."
+                      pip install -r requirements.txt
+                      pip install pytest
+                      pip install pytest-cov
+
+                      echo "Running tests..."
+                      pytest -v --cov --junitxml="result.xml" test_api.py test_api_2.py test_api_3.py
+
+                      echo "Tests completed."
+
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - "**/result.xml"
+
+    - stage:
+        name: Deploy
+        type: Deploy
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: Deploy
+                  name: Deploy Application
+                  identifier: Deploy_App
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: python:latest
+                    shell: Sh
+                    command: |-
+                      echo "Deploying application..."
+                      # Add your deployment commands here
+                      echo "Deployment completed."
+
+# Define the pipeline's trigger (optional, for manual or automated execution)
+triggers:
+  - trigger:
+      type: Manual
+      description: Trigger this pipeline manually.
+
